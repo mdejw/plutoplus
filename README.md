@@ -1,6 +1,14 @@
 # Pluto+
 The repo maintain the firmware of Pluto+. Pluto+ is a software-defined radio platform that supports 2TX 2RX, supports Gigabit Ethernet and Micro SD card. The design inherited from the well-known ADI ADALM-PLUTO with several improvements.
 
+# My modifications:
+- patches for pluto fw 0.35
+- env variables to build on my system (this is not a reference system - as stated on adalm-pluto, so may not work as intended)
+- minor updates for this manual (fixed dfu linux update example)
+- Note that I've update my PLUTOPLUS via DFU with this firmware.
+
+Note: you use it on your own risk.
+
 [TOC]
 
 ## Specification
@@ -50,30 +58,31 @@ If you device is not responding anymore, you have to apply DFU procedure to unbr
 4. Run DFU utility with the following command:
 
    ```
-   dfu-tool -a 0 -write boot.dfu
-   dfu-tool -a 1 -write pluto.dfu
+   dfu-util -a boot.dfu -D ./boot.dfu
+   dfu-util -a firmware.dfu -D ./pluto.dfu
    ```
 
 ## How to build firmware manually
 1. Clone this repo
 2. Download the source code via 'git submodule update --init'
-3. Apply the diff to each subfolder
+3. Apply the diff to each subfolder - you can use script `scripts/apply.sh`, which do generally same as follows:
    ```
    cd plutosdr-fw
    git apply ../patches/fw.diff
-   
+
    cd hdl
-   git apply ../../hdl.diff
-   cd ..
-   
-   cd linux
-   git apply ../../linux.diff
-   cd ..
-   
-   cd u-boot-xlnx
-   git apply ../../u-boot-xlnx.diff
-   cd ..
-   
+   git apply ../../patches/hdl.diff
+
+   cd ../linux
+   git apply ../../patches/linux.diff
+
+   cd ../u-boot-xlnx
+   git apply ../../patches/u-boot-xlnx.diff
+
+   cd ../buildroot
+   git apply ../../patches/buildroot.diff
+
+   cd ../..
    ```
 4. Build the code via 'make' in plutosdr-fw folder
 
